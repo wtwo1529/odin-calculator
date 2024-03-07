@@ -1,0 +1,1 @@
+Calculator Website Icon: https://upload.wikimedia.org/wikipedia/commons/1/1e/Calculator_icon.svg
