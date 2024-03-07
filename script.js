@@ -36,6 +36,10 @@ buttons.forEach((element) => {
                 firstNumber = Number(value);
                 display.textContent += value;
             }
+            else if (operation === null && secondNumber === null && firstNumber == 0) {
+                firstNumber = Number(value);
+                display.textContent = value;
+            }
             else if (operation === null && secondNumber === null) {
                 firstNumber = firstNumber * 10 + Number(value);
                 display.textContent += value;
