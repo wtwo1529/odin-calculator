@@ -4,7 +4,6 @@
 html, body {
     width: 100%;
     height: 100%;
-    border: 2px black solid;
     margin: 0;
 }
 .calculator-container {
@@ -43,6 +42,7 @@ html, body {
     box-sizing: border-box;
     color: white;
     font-weight: 300;
+    overflow: hidden;
 }
 .btn-row {
     display: flex;
@@ -65,7 +65,7 @@ html, body {
 }
 button {
     border-radius: 128px;
-    border: 1px rgba(0, 0, 0, 0.6) solid;
+    border: 0.8px rgba(0, 0, 0, 0.6) solid;
     padding: 25px 50px;
     font-size: 41px;
     text-align: center;
