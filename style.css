@@ -67,3 +67,6 @@ button {
     color: rgb(228, 224, 224);
     flex: auto;
 }
+.pressed {
+    background-color: rgba(212, 208, 208, 0.295);
+}

@@ -1,9 +1,13 @@
 
 let firstNumber = null;
 let firstNumberLength = 0;
+let firstNumberDecimal = false;
+let firstNumberDepth = 1;
 
 let secondNumber = null;
 let secondNumberLength = 0;
+let secondNumberDecimal = false;
+let secondNumberDepth = 1;
 
 let operation = null;
 let lastOperation = null;
@@ -40,23 +44,33 @@ buttons.forEach((element) => {
                 firstNumber = Number(value);
                 display.textContent = value;
             }
-            else if (operation === null && secondNumber === null) {
+            else if (operation === null && secondNumber === null && firstNumberDecimal == false) {
                 firstNumber = firstNumber * 10 + Number(value);
                 display.textContent += value;
             }
-            if (operation !== null && firstNumber !== null) {
+            else if (operation === null && secondNumber === null && firstNumberDecimal == true) {
+                firstNumber += Number(value) / (10 ** firstNumberDepth);
+                firstNumberDepth++;
+                display.textContent += value;  
+            }
+            if (operation !== null && firstNumber !== null && secondNumber === null) {
                 secondNumber = Number(value);
                 display.textContent = value;
             }
-            else if (secondNumber !== null) {
-                seconcdNumber = secondNumber * 10 + Number(value);
+            else if (secondNumber !== null && secondNumberDecimal == false) {
+                secondNumber = secondNumber * 10 + Number(value);
                 display.textContent += value;
+            }
+            else if (secondNumber !== null && secondNumberDecimal == true) {
+                secondNumber += Number(value) / (10 ** secondNumberDepth);
+                secondNumberDepth++;
+                display.textContent += value;  
             }
         });
     }
     else if (classes.contains("operand")) {
         element.addEventListener('click', (event) => {
-            (operation === null) ? (display.textContent = "", operation = value) : console.log(false);
+            (operation === null) ? (display.textContent = "", operation = value, event.target.classList.add("pressed")) : console.log(false);
         })
     }
     else if (classes.contains("clear")) {
@@ -64,17 +78,103 @@ buttons.forEach((element) => {
             secondNumber = operation = null;
             firstNumber = 0;
             display.textContent = "0";
+            firstNumberDecimal = false;
+            secondNumberDecimal = false;
+            firstNumberDepth = 1;
+            secondNumberDepth = 1;
         })
     }
     else if (classes.contains("equal")) {
         element.addEventListener('click', function(event) {
-            if (operation !== null && firstNumber !== null)
+            if (operation !== null && firstNumber !== null && secondNumber !== null)
             {
                 let result = operate(operation, firstNumber, secondNumber);
                 display.textContent = result;
+                
+                let pressed = document.getElementsByClassName('pressed');
+                for (button of pressed) {
+                    button.classList.remove('pressed')
+                }
                 firstNumber = result;
-                secondNumber = operation = null;    
+                secondNumber = operation = null;   
+                firstNumberDecimal = false;
+                secondNumberDecimal = false; 
+                firstNumberDepth = String(firstNumber).split('').reduce(
+                    (total, currentItem) => {
+                        return total + 1;
+                    }
+                , 0);
+                secondNumberDepth = 1;
+                
             }
         });
     }
-})
+    else if (classes.contains("decimal")) {
+        element.addEventListener('click', (event) => {
+            if (secondNumber === null && operation === null && firstNumberDecimal == false) {
+                firstNumberDecimal = true;
+                display.textContent += value;
+            }
+            else if (operation !== null && firstNumber !== null && secondNumberDecimal == false) {
+                secondNumberDecimal = true;
+                display.textContent += value;
+            }
+        })
+    }
+    else if (classes.contains("delete")) {
+        element.addEventListener('click', (event) => {
+            if (firstNumber !== null && operation === null && secondNumber === null) {
+                let array = firstNumber.toString().split('.');
+                let newValue; 
+                if (array.length > 1)
+                {
+                    let nonDecimalArray = array[0].split('');
+                    let decimalArray = array[1].split('');
+                    decimalArray.pop();
+                    let decimal = Number(decimalArray.join(''));
+                    let nonDecimal = Number(nonDecimalArray.join(''));
+                    let decimalPart = parseFloat(decimal * (10 ** (-1 * (decimalArray.length)))).toFixed(firstNumberDepth)
+                    newValue = nonDecimal + decimalPart;
+                }
+                else {
+                    let nonDecimalArray = array[0].split('');
+                    let nonDecimal = Number(nonDecimalArray.join(''));
+                    nonDecimalArray.pop();
+                    newValue = nonDecimal;
+                }
+                firstNumber = newValue;
+                if (firstNumber == 0) {
+                    firstNumber = 0;
+                }
+                display.textContent = newValue;
+            }
+            else if (firstNumber !== null && operation !== null & secondNumber !== null)
+            {
+                let array = secondNumber.toString().split('.');
+                let newValue; 
+                if (array.length > 1)
+                {
+                    let nonDecimalArray = array[0].split('');
+                    let decimalArray = array[1].split('');
+                    decimalArray.pop();
+                    let decimal = Number(decimalArray.join(''));
+                    let nonDecimal = Number(nonDecimalArray.join(''));
+                    let decimalPart = parseFloat(decimal * (10 ** (-1 * (decimalArray.length)))).toFixed(firstNumberDepth)
+                    newValue = nonDecimal + decimalPart;
+                }
+                else {
+                    let nonDecimalArray = array[0].split('');
+                    let nonDecimal = Number(nonDecimalArray.join(''));
+                    nonDecimalArray.pop();
+                    newValue = nonDecimal;
+                }
+                secondNumber = newValue;
+                if (secondNumber == 0) {
+                    secondNumber = 0;
+                }
+                display.textContent = newValue;
+            }
+            }
+        )
+    }
+});
